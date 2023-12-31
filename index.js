@@ -1,6 +1,7 @@
 const { createStore, applyMiddleware } = require("redux");
 const { delayTheCall, fetchTodosData } = require("./middlewares");
 const fetch = require("node-fetch");
+const { fetchOneTodos, fetchFiveTodos } = require("./utilsFunctions");
 
 //initial state
 const initialState = [];
@@ -34,18 +35,16 @@ store.subscribe(() => {
 });
 
 //action dispatch
-store.dispatch({
-  type: "todo/addTodo",
-  payload: {
-    todo: "Have to complete redux as soon as possible!!!",
-  },
-});
+// store.dispatch({
+//   type: "todo/addTodo",
+//   payload: {
+//     todo: "Have to complete redux as soon as possible!!!",
+//   },
+// });
 // store.dispatch({
 //   type: "todo/loadTodo",
 //   payload: {
 //     todo: ["hello", "hello1"],
 //   },
 // });
-store.dispatch({
-  type: "todo/customAction",
-});
+store.dispatch(fetchFiveTodos);
