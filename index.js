@@ -1,5 +1,5 @@
 const { createStore, applyMiddleware } = require("redux");
-const { delayTheCall } = require("./middlewares");
+const { delayTheCall, fetchTodosData } = require("./middlewares");
 const fetch = require("node-fetch");
 
 //initial state
@@ -23,7 +23,10 @@ const reducer = (state = initialState, action) => {
 };
 
 //store
-const store = createStore(reducer, applyMiddleware(delayTheCall));
+const store = createStore(
+  reducer,
+  applyMiddleware(delayTheCall, fetchTodosData)
+);
 
 //subscribe
 store.subscribe(() => {
@@ -31,12 +34,12 @@ store.subscribe(() => {
 });
 
 //action dispatch
-// store.dispatch({
-//   type: "todo/addTodo",
-//   payload: {
-//     todo: "Have to complete redux as soon as possible!!!",
-//   },
-// });
+store.dispatch({
+  type: "todo/addTodo",
+  payload: {
+    todo: "Have to complete redux as soon as possible!!!",
+  },
+});
 // store.dispatch({
 //   type: "todo/loadTodo",
 //   payload: {
