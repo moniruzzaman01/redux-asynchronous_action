@@ -10,7 +10,7 @@ const initialState = {
 //fetch todos
 const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
   const response = await fetch(
-    "https://jsonplaceholder.typicodes.com/todos?_limit=5"
+    "https://jsonplaceholder.typicode.com/todos?_limit=5"
   );
   const todos = await response.json();
   return todos;
@@ -25,9 +25,27 @@ const todosSlice = createSlice({
       console.log("hey called");
     },
   },
+
+  //this part is deprecated/removed
+
   //   extraReducers: {
-  //     ["todos/fetchTodos/pending"]: (state, action) => {},
+  //     ["todos/fetchTodos/pending"]: (state, action) => {
+  //       (state.isLoading = true), (state.error = "");
+  //     },
+  //     ["todos/fetchTodos/fulfilled"]: (state, action) => {
+  //       (state.isLoading = false),
+  //         (state.todos = action.payload),
+  //         (state.error = "");
+  //     },
+  //     ["todos/fetchTodos/rejected"]: (state, action) => {
+  //       (state.isLoading = true),
+  //         (state.error = action.error.message),
+  //         (state.todos = []);
+  //     },
   //   },
+
+  //this part is deprecated/removed
+
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.pending, (state, action) => {
       (state.isLoading = true), (state.error = "");
