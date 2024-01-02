@@ -1,50 +1,85 @@
 const { createStore, applyMiddleware } = require("redux");
-const { delayTheCall, fetchTodosData } = require("./middlewares");
 const fetch = require("node-fetch");
-const { fetchOneTodos, fetchFiveTodos } = require("./utilsFunctions");
+const { thunk } = require("redux-thunk");
 
 //initial state
-const initialState = [];
+const initialState = {
+  isLoading: false,
+  todos: [],
+  error: "",
+};
+
+//actions
+const todosLoadRequested = () => {
+  return {
+    type: "todosLoad/requested",
+  };
+};
+const todosLoadSuccessfull = (todos) => {
+  return {
+    type: "todosLoad/successfull",
+    payload: todos,
+  };
+};
+const todosLoadFailed = (error) => {
+  return {
+    type: "todosLoad/failed",
+    payload: error.message,
+  };
+};
+
+//totoloader thunk func
+const todoLoader = () => {
+  return async (dispatch) => {
+    console.log("hello");
+    dispatch(todosLoadRequested());
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/todos?_limit=5"
+      );
+      const todos = await response.json();
+      dispatch(todosLoadSuccessfull(todos));
+    } catch (error) {
+      dispatch(todosLoadFailed(error));
+    }
+  };
+};
 
 //reducer
-const reducer = (state = initialState, action) => {
+const todoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "todo/addTodo":
-      return [
+    case "todosLoad/requested":
+      return {
         ...state,
-        {
-          ...action.payload,
-        },
-      ];
-    case "todo/loadTodo":
-      return [...state, ...action.payload.todo];
+        isLoading: true,
+        error: "",
+      };
+    case "todosLoad/successfull":
+      return {
+        ...state,
+        isLoading: false,
+        todos: action.payload,
+        error: "",
+      };
+    case "todosLoad/failed":
+      return {
+        ...state,
+        isLoading: true,
+        todos: [],
+        error: action.payload,
+      };
     default:
       return state;
   }
 };
 
 //store
-const store = createStore(
-  reducer,
-  applyMiddleware(delayTheCall, fetchTodosData)
-);
+const store = createStore(todoReducer, applyMiddleware(thunk));
 
 //subscribe
 store.subscribe(() => {
-  console.log(`state is ${JSON.stringify(store.getState())}`);
+  console.log(store.getState());
 });
 
-//action dispatch
-// store.dispatch({
-//   type: "todo/addTodo",
-//   payload: {
-//     todo: "Have to complete redux as soon as possible!!!",
-//   },
-// });
-// store.dispatch({
-//   type: "todo/loadTodo",
-//   payload: {
-//     todo: ["hello", "hello1"],
-//   },
-// });
-store.dispatch(fetchFiveTodos);
+//dispatch
+store.dispatch(todoLoader());
